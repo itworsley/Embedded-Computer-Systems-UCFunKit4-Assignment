@@ -11,6 +11,7 @@
 #include "tinygl.h"
 #include "pacer.h"
 #include "../fonts/font5x7_1.h"
+#include "ir_uart.h"
 
 /* Define polling rate in Hz.  */
 #define LOOP_RATE 300
@@ -37,6 +38,8 @@ int main (void)
     navswitch_init();
     tinygl_init(LOOP_RATE);
     pacer_init(LOOP_RATE);
+    ir_uart_init();
+
 
     tinygl_font_set(&font5x7_1);
     tinygl_text_mode_set(TINYGL_TEXT_MODE_STEP);
