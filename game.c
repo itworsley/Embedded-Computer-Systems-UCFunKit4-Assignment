@@ -38,10 +38,7 @@ int main (void)
     while (1)
     {
 	navswitch_update();
-	if (navswitch_push_event_p(NAVSWITCH_WEST))
-	{
-		tinygl_update();
-	}
+	tinygl_update();
 	pacer_wait();
     }
     return 0;
