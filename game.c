@@ -4,23 +4,45 @@
  * Isaac Worsley - 
  * */
 
+/* Module declarations */ 
 #include "system.h"
+#include "ledmat.h"
+#include "navswitch.h"
+#include "tinygl.h"
+#include "pacer.h"
+#include "../fonts/font5x7_1.h"
 
-int rps(char pChoice, char oChoice)
-{
-	
-}
+/* Define polling rate in Hz.  */
+#define LOOP_RATE 300
+
+//int rps(char pChoice, char oChoice)
+//{
+	//return 0;
+//}
 
 int main (void)
 {
+	/* System init */
+    system_init();
+	ledmat_init();
+	navswitch_init();
+	tinygl_init(LOOP_RATE);
+	pacer_init(LOOP_RATE);
 	
-    system_init ();
+	tinygl_font_set(&font5x7_1);
+	tinygl_text_mode_set(TINYGL_TEXT_MODE_STEP);
+	tinygl_text_dir_set (TINYGL_TEXT_DIR_NORMAL);
 
-
+	tinygl_text("RPS");
+	
     while (1)
     {
-
-
-
+	navswitch_update();
+	if (navswitch_push_event_p(NAVSWITCH_WEST))
+	{
+		tinygl_update();
+	}
+	pacer_wait();
     }
+    return 0;
 }
