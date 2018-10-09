@@ -84,7 +84,7 @@ int main (void)
     options[3] = '\0';
     char character = options[i];
     char pChoice = '\0';
-    char oChoice = '\0';
+    //char oChoice = '\0';
 
 
     while (1)
@@ -108,20 +108,26 @@ int main (void)
                 pChoice = character;
             }
         }
-        while (oChoice == '\0')
+        while (1)
         {
+            pacer_wait ();
+            tinygl_update ();
+            display_character(character);
             if (ir_uart_read_ready_p())
                 {
                     ir_uart_putc(pChoice);
+                    char oChoice;
                     oChoice = ir_uart_getc();
+                    character = rps(pChoice, oChoice);
+                    display_character(character);
                 }
         }
-        character = rps(pChoice, oChoice);
+
 /*
         pChoice = '\0';
         oChoice = '\0';
 */
-        display_character(character);
+
     }
     return 0;
 }
