@@ -119,7 +119,6 @@ int main (void)
             }
             result = rps(pChoice, oChoice);
             display_character(result);
-            return 1;
         }
 
     }
