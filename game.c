@@ -85,7 +85,6 @@ int main (void)
     char character = options[i];
     char pChoice;
     char oChoice;
-    char result;
     int rec = 0;
 
 
@@ -108,9 +107,9 @@ int main (void)
         if (navswitch_push_event_p(NAVSWITCH_PUSH))
         {
             pChoice = character;
-            ir_uart_putc(character);
             while (rec == 0)
             {
+                ir_uart_putc(pChoice);
                 if (ir_uart_read_ready_p())
                 {
                     oChoice = ir_uart_getc();
