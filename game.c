@@ -28,7 +28,7 @@ char rps(char pChoice, char oChoice)
             if (oChoice == 'S')
             {
                 return 'W';
-            } else
+            } else if (oChoice == 'P')
             {
                 return 'L';
             }
@@ -36,7 +36,7 @@ char rps(char pChoice, char oChoice)
             if (oChoice == 'R')
             {
                 return 'W';
-            } else
+            } else if (oChoice == 'S')
             {
                 return 'L';
             }
@@ -45,7 +45,7 @@ char rps(char pChoice, char oChoice)
             if (oChoice == 'P')
             {
                 return 'W';
-            } else
+            } else if (oChoice == 'R')
             {
                 return 'L';
             }
@@ -93,6 +93,7 @@ int main (void)
         pacer_wait ();
         tinygl_update ();
         navswitch_update ();
+        display_character(character);
 
         if (navswitch_push_event_p (NAVSWITCH_NORTH) && i < 2)
         {
@@ -102,7 +103,6 @@ int main (void)
         {
             character = options[--i];
         }
-        display_character(character);
 
         if (navswitch_push_event_p(NAVSWITCH_PUSH))
         {
