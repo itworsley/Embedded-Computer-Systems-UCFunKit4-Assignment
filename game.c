@@ -17,10 +17,41 @@
 #define LOOP_RATE 300
 #define MESSAGE_RATE 10
 
-//int rps(char pChoice, char oChoice)
-//{
-    //return 0;
-//}
+char rps(char pChoice, char oChoice)
+{
+    while (1)
+    {
+        if (pChoice == oChoice)
+        {
+            return 'D';
+        } else if (pChoice == 'R') {
+            if (oChoice == 'S')
+            {
+                return 'W';
+            } else
+            {
+                return 'L';
+            }
+        } else if (pChoice == 'P') {
+            if (oChoice == 'R')
+            {
+                return 'W';
+            } else
+            {
+                return 'L';
+            }
+        } else if (pChoice == 'S')
+        {
+            if (oChoice == 'P')
+            {
+                return 'W';
+            } else
+            {
+                return 'L';
+            }
+        }
+    }
+}
 
 void display_character (char character)
 {
@@ -54,6 +85,8 @@ int main (void)
     char character = options[i];
     char pChoice;
     char oChoice;
+    char result;
+    int rec = 0;
 
 
     while (1)
@@ -76,9 +109,18 @@ int main (void)
         {
             pChoice = character;
             ir_uart_putc(character);
-            oChoice = ir_uart_getc();
+            while (rec == 0)
+            {
+                if (ir_uart_read_ready_p())
+                {
+                    oChoice = ir_uart_getc();
+                    rec = 1;
+                }
+            }
+            result = rps(pChoice, oChoice);
+            display_character(result);
+            return 1;
         }
-
 
     }
     return 0;
