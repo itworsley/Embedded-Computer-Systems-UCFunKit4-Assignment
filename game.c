@@ -83,44 +83,45 @@ int main (void)
     options[2] = 'S';
     options[3] = '\0';
     char character = options[i];
-    char pChoice;
-    char oChoice;
-    int rec = 0;
+    char pChoice = '\0';
+    char oChoice = '\0';
 
 
     while (1)
     {
-        pacer_wait ();
-        tinygl_update ();
-        navswitch_update ();
-        display_character(character);
-
-        if (navswitch_push_event_p (NAVSWITCH_NORTH) && i < 2)
+        while (pChoice == '\0')
         {
-            character = options[++i];
-        }
-        if (navswitch_push_event_p (NAVSWITCH_SOUTH) && i > 0)
-        {
-            character = options[--i];
-        }
-
-        if (navswitch_push_event_p(NAVSWITCH_PUSH))
-        {
-            pChoice = character;
-            while (rec == 0)
+            pacer_wait ();
+            tinygl_update ();
+            navswitch_update ();
+            display_character(character);
+            if (navswitch_push_event_p (NAVSWITCH_NORTH) && i < 2)
             {
-                ir_uart_putc(pChoice);
-                if (ir_uart_read_ready_p())
-                {
-                    oChoice = ir_uart_getc();
-                    rec = 1;
-                }
+                character = options[++i];
             }
-            character = rps(pChoice, oChoice);
-            pChoice = '\0';
-            oChoice = '\0';
+            if (navswitch_push_event_p (NAVSWITCH_SOUTH) && i > 0)
+            {
+                character = options[--i];
+            }
+            if (navswitch_push_event_p(NAVSWITCH_PUSH))
+            {
+                pChoice = character;
+            }
         }
-
+        while (oChoice == '\0')
+        {
+            if (ir_uart_read_ready_p())
+                {
+                    ir_uart_putc(pChoice);
+                    oChoice = ir_uart_getc();
+                }
+        }
+        character = rps(pChoice, oChoice);
+/*
+        pChoice = '\0';
+        oChoice = '\0';
+*/
+        display_character(character);
     }
     return 0;
 }
