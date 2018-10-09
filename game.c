@@ -117,6 +117,8 @@ int main (void)
                 }
             }
             character = rps(pChoice, oChoice);
+            pChoice = '\0';
+            oChoice = '\0';
         }
 
     }
