@@ -117,8 +117,7 @@ int main (void)
                     rec = 1;
                 }
             }
-            result = rps(pChoice, oChoice);
-            display_character(result);
+            character = rps(pChoice, oChoice);
         }
 
     }
