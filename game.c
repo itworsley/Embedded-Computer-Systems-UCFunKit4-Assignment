@@ -53,6 +53,8 @@ int main (void)
     options[2] = 'S';
     options[3] = '\0';
     char character = options[i];
+    char pChoice;
+    char oChoice;
 
 
     while (1)
@@ -66,6 +68,16 @@ int main (void)
 
         if (navswitch_push_event_p (NAVSWITCH_SOUTH) && i > 0)
             character = options[--i];
+
+        if (navswitch_push_event_p(NAVSWITCH_PUSH))
+            pChoice = character;
+            ir_uart_putc(character);
+
+        if (ir_uart_read_ready_p())
+        {
+            oChoice = ir_uart_getc();
+        }
+
         display_character(character);
     }
     return 0;
