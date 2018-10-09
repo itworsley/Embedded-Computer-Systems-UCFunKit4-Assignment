@@ -40,7 +40,6 @@ int main (void)
     pacer_init(LOOP_RATE);
     ir_uart_init();
 
-
     tinygl_font_set(&font5x7_1);
     tinygl_text_mode_set(TINYGL_TEXT_MODE_STEP);
     tinygl_text_dir_set (TINYGL_TEXT_DIR_NORMAL);
@@ -64,21 +63,23 @@ int main (void)
         navswitch_update ();
 
         if (navswitch_push_event_p (NAVSWITCH_NORTH) && i < 2)
+        {
             character = options[++i];
-
+        }
         if (navswitch_push_event_p (NAVSWITCH_SOUTH) && i > 0)
+        {
             character = options[--i];
+        }
+        display_character(character);
 
         if (navswitch_push_event_p(NAVSWITCH_PUSH))
+        {
             pChoice = character;
             ir_uart_putc(character);
-
-        if (ir_uart_read_ready_p())
-        {
             oChoice = ir_uart_getc();
         }
 
-        display_character(character);
+
     }
     return 0;
 }
