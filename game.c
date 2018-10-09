@@ -19,35 +19,41 @@
 
 char rps(char pChoice, char oChoice)
 {
+    char win = 'W';
+    char lose = 'L';
+    char draw = 'D';
+    char rock = 'R';
+    char paper = 'P';
+    char scissor = 'S';
     while (1)
     {
         if (pChoice == oChoice)
         {
-            return 'D';
-        } else if (pChoice == 'R') {
-            if (oChoice == 'S')
+            return draw;
+        } else if (pChoice == rock) {
+            if (oChoice == scissor)
             {
-                return 'W';
-            } else if (oChoice == 'P')
+                return win;
+            } else if (oChoice == paper)
             {
-                return 'L';
+                return lose;
             }
-        } else if (pChoice == 'P') {
-            if (oChoice == 'R')
+        } else if (pChoice == paper) {
+            if (oChoice == rock)
             {
-                return 'W';
-            } else if (oChoice == 'S')
+                return win;
+            } else if (oChoice == scissor)
             {
-                return 'L';
+                return lose;
             }
-        } else if (pChoice == 'S')
+        } else if (pChoice == scissor)
         {
-            if (oChoice == 'P')
+            if (oChoice == paper)
             {
-                return 'W';
-            } else if (oChoice == 'R')
+                return win ;
+            } else if (oChoice == rock)
             {
-                return 'L';
+                return lose;
             }
         }
     }
