@@ -120,8 +120,8 @@ int main (void)
             tinygl_update ();
             display_character(character);
             if (ir_uart_read_ready_p())
+                ir_uart_putc(pChoice);
                 {
-                    ir_uart_putc(pChoice);
                     char oChoice;
                     oChoice = ir_uart_getc();
                     character = rps(pChoice, oChoice);
