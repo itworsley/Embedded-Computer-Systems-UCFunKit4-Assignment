@@ -18,6 +18,7 @@
 #define LOOP_RATE 300
 #define MESSAGE_RATE 10
 
+/* Boolean value used to restart the game */
 static bool isGameOver = 0;
 
 /** Initialise all possible characters to be displayed on the LED matrix
@@ -98,6 +99,7 @@ char rps(char pChoice, char oChoice)
 void display_character (char character)
 {
     char buffer[2];
+
     buffer[0] = character;
     buffer[1] = '\0';
     tinygl_text (buffer);
@@ -173,9 +175,7 @@ int main (void)
                     character = rps(pChoice, oChoice);
                     display_character(character);
                 }
-
         }
-
     }
     return 0;
 }
