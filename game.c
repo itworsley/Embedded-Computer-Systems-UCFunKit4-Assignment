@@ -165,7 +165,10 @@ int main (void)
         if (!recieved) {
             if (ir_uart_read_ready_p()) {
                 oChoice = ir_uart_getc();
-                recieved = 1;
+                if(oChoice == 'R' || oChoice == 'P' || oChoice == 'S')
+                {
+                    recieved = 1;
+                }
             }
         }
 
@@ -174,6 +177,7 @@ int main (void)
         }
 
         if(sent && recieved) {
+
             character = rps(pChoice, oChoice);
             display_character (character);
 
