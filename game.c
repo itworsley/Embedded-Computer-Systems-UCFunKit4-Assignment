@@ -1,10 +1,10 @@
 /* ENCE260 2018 Group assignment
  * Group 211
  * Joshua Smith - jsm160
- * Isaac Worsley -
+ * Isaac Worsley - itw21
  * */
 
-/* Module declarations */
+/* Module declarations. */
 #include "system.h"
 #include "ledmat.h"
 #include "navswitch.h"
@@ -12,11 +12,16 @@
 #include "pacer.h"
 #include "../fonts/font5x7_1.h"
 #include "ir_uart.h"
+#include <stdbool.h>
 
-/* Define polling rate in Hz.  */
+/* Define polling rate in Hz. */
 #define LOOP_RATE 300
 #define MESSAGE_RATE 10
 
+static bool isGameOver = 0;
+
+/** Initialise all possible characters to be displayed on the LED matrix
+ *  as a result of making a decision about the result of the game */
 char rps(char pChoice, char oChoice)
 {
     char win = 'W';
@@ -27,38 +32,69 @@ char rps(char pChoice, char oChoice)
     char scissor = 'S';
     while (1)
     {
+        /* If a draw occurs. */
         if (pChoice == oChoice)
         {
             return draw;
-        } else if (pChoice == rock) {
+            isGameOver = 1;
+        } 
+        
+        /* If player chooses rock. */
+        else if (pChoice == rock) {
+            
+            /* Rock beats scissors. */
             if (oChoice == scissor)
             {
                 return win;
-            } else if (oChoice == paper)
+                isGameOver = 1;
+            }
+            
+            /* Paper beats rock. */
+            else if (oChoice == paper)
             {
                 return lose;
+                isGameOver = 1;
             }
-        } else if (pChoice == paper) {
+        } 
+        
+        /* If player chooses paper. */
+        else if (pChoice == paper) {
+    
+            /* Paper beats rock. */
             if (oChoice == rock)
             {
                 return win;
-            } else if (oChoice == scissor)
+                isGameOver = 1;
+            } 
+            
+            /* Scissors beats paper. */
+            else if (oChoice == scissor)
             {
                 return lose;
+                isGameOver = 1;
             }
-        } else if (pChoice == scissor)
+        } 
+        
+        /* If player chooses scissors. */
+        else if (pChoice == scissor)
         {
+            /* Scissors beats paper. */
             if (oChoice == paper)
             {
-                return win ;
-            } else if (oChoice == rock)
+                return win;
+                isGameOver = 1;
+            } 
+            
+            /* Rock beats scissors. */
+            else if (oChoice == rock)
             {
                 return lose;
+                isGameOver = 1;
             }
         }
     }
 }
-
+/** Displays the text on the LED matrix. */
 void display_character (char character)
 {
     char buffer[2];
@@ -67,9 +103,9 @@ void display_character (char character)
     tinygl_text (buffer);
 }
 
-int main (void)
+/** Initialise the FunKit4 hardware and the tinygl module to display text. */
+void game_init (void)
 {
-    /* System init */
     system_init();
     ledmat_init();
     navswitch_init();
@@ -81,7 +117,11 @@ int main (void)
     tinygl_text_mode_set(TINYGL_TEXT_MODE_STEP);
     tinygl_text_dir_set (TINYGL_TEXT_DIR_NORMAL);
     tinygl_text_speed_set(MESSAGE_RATE);
+}
 
+int main (void)
+{
+    game_init();
     char options[4];
     int i = 0;
     options[0] = 'R';
@@ -91,6 +131,7 @@ int main (void)
     char character = options[i];
     char pChoice = '\0';
     //char oChoice = '\0';
+    char oChoice;
 
 
     while (1)
@@ -119,20 +160,23 @@ int main (void)
             pacer_wait ();
             tinygl_update ();
             display_character(character);
-            if (ir_uart_read_ready_p())
+            if (ir_uart_read_ready_p()) {
                 ir_uart_putc(pChoice);
                 {
-                    char oChoice;
+                    
                     oChoice = ir_uart_getc();
                     character = rps(pChoice, oChoice);
                     display_character(character);
                 }
-        }
+            }
+            if (navswitch_push_event_p (NAVSWITCH_PUSH) && isGameOver) {
+                pChoice = '\0';
+                oChoice = '\0';
+                isGameOver = 0;
+                main();
 
-/*
-        pChoice = '\0';
-        oChoice = '\0';
-*/
+            }
+        }
 
     }
     return 0;
