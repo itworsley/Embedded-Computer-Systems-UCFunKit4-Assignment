@@ -1,0 +1,22 @@
+#IncludeRegexLine: ^[ 	]*[#%][ 	]*(include|import)[ 	]*[<"]([^">]+)([">])
+
+#IncludeRegexScan: ^.*$
+
+#IncludeRegexComplain: ^$
+
+#IncludeRegexTransform: 
+
+/home/itworsley/Desktop/260_Assignment/game.c
+system.h
+/home/itworsley/Desktop/260_Assignment/system.h
+ledmat.h
+/home/itworsley/Desktop/260_Assignment/ledmat.h
+navswitch.h
+/home/itworsley/Desktop/260_Assignment/navswitch.h
+tinygl.h
+/home/itworsley/Desktop/260_Assignment/tinygl.h
+pacer.h
+/home/itworsley/Desktop/260_Assignment/pacer.h
+../fonts/font5x7_1.h
+/home/itworsley/Desktop/fonts/font5x7_1.h
+

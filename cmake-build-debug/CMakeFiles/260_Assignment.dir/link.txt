@@ -1,0 +1,1 @@
+/usr/bin/cc -g   CMakeFiles/260_Assignment.dir/game.c.o  -o 260_Assignment 
