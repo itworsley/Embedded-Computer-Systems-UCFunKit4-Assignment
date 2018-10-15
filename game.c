@@ -163,14 +163,14 @@ int main (void)
                 pChoice = character;
             }
         }
-        while (1)
+        while (isGameOver == 0)
         {
             pacer_wait ();
             tinygl_update ();
             display_character(character);
             if (ir_uart_read_ready_p())
-                ir_uart_putc(pChoice);
                 {
+                    ir_uart_putc(pChoice);
                     oChoice = ir_uart_getc();
                     character = rps(pChoice, oChoice);
                     display_character(character);
