@@ -18,7 +18,6 @@
 #define LOOP_RATE 300
 #define MESSAGE_RATE 10
 
-/* Boolean value used to restart the game */
 static bool isGameOver = 0;
 
 /** Initialise all possible characters to be displayed on the LED matrix
@@ -31,13 +30,13 @@ char rps(char pChoice, char oChoice)
     char rock = 'R';
     char paper = 'P';
     char scissor = 'S';
+
     while (1)
     {
         /* If a draw occurs. */
         if (pChoice == oChoice)
         {
             return draw;
-            isGameOver = 1;
         }
 
         /* If player chooses rock. */
@@ -47,14 +46,12 @@ char rps(char pChoice, char oChoice)
             if (oChoice == scissor)
             {
                 return win;
-                isGameOver = 1;
             }
 
             /* Paper beats rock. */
             else if (oChoice == paper)
             {
                 return lose;
-                isGameOver = 1;
             }
         }
 
@@ -65,14 +62,12 @@ char rps(char pChoice, char oChoice)
             if (oChoice == rock)
             {
                 return win;
-                isGameOver = 1;
             }
 
             /* Scissors beats paper. */
             else if (oChoice == scissor)
             {
                 return lose;
-                isGameOver = 1;
             }
         }
 
@@ -83,14 +78,12 @@ char rps(char pChoice, char oChoice)
             if (oChoice == paper)
             {
                 return win;
-                isGameOver = 1;
             }
 
             /* Rock beats scissors. */
             else if (oChoice == rock)
             {
                 return lose;
-                isGameOver = 1;
             }
         }
     }
@@ -99,7 +92,6 @@ char rps(char pChoice, char oChoice)
 void display_character (char character)
 {
     char buffer[2];
-
     buffer[0] = character;
     buffer[1] = '\0';
     tinygl_text (buffer);
@@ -124,58 +116,77 @@ void game_init (void)
 int main (void)
 {
     game_init();
+    pacer_wait ();
+    tinygl_update ();
     char options[4];
     int i = 0;
     options[0] = 'R';
     options[1] = 'P';
     options[2] = 'S';
     options[3] = '\0';
+    char wait = '-';
     char character = options[i];
     char pChoice = '\0';
     //char oChoice = '\0';
     char oChoice;
+    char recieved = 0;
+    char sent = 0;
+    char ready = 0;
 
+    pacer_wait ();
+
+    display_character(character);
 
     while (1)
     {
-        if (navswitch_push_event_p (NAVSWITCH_PUSH) && isGameOver) {
-                pChoice = '\0';
-                oChoice = '\0';
-                isGameOver = 0;
-                main();
-        }
-        while (pChoice == '\0')
-        {
-            pacer_wait ();
-            tinygl_update ();
-            navswitch_update ();
-            display_character(character);
-            if (navswitch_push_event_p (NAVSWITCH_NORTH) && i < 2)
-            {
+
+        navswitch_update ();
+        tinygl_update ();
+        if(!ready) {
+            if (navswitch_push_event_p (NAVSWITCH_NORTH) && i < 2) {
                 character = options[++i];
             }
-            if (navswitch_push_event_p (NAVSWITCH_SOUTH) && i > 0)
-            {
+            if (navswitch_push_event_p (NAVSWITCH_SOUTH) && i > 0) {
                 character = options[--i];
             }
-            if (navswitch_push_event_p(NAVSWITCH_PUSH))
-            {
+            if (navswitch_push_event_p(NAVSWITCH_PUSH)) {
                 pChoice = character;
+                tinygl_clear();
+                ready = 1;
+            }
+            display_character(character);
+        }
+
+        else {
+            ir_uart_putc(pChoice);
+            sent = 1;
+        }
+
+        if (!recieved) {
+            if (ir_uart_read_ready_p()) {
+                oChoice = ir_uart_getc();
+                recieved = 1;
             }
         }
-        while (isGameOver == 0)
-        {
-            pacer_wait ();
-            tinygl_update ();
-            display_character(character);
-            if (ir_uart_read_ready_p())
-                {
-                    ir_uart_putc(pChoice);
-                    oChoice = ir_uart_getc();
-                    character = rps(pChoice, oChoice);
-                    display_character(character);
-                }
+
+        if (sent && !recieved) {
+            display_character(wait);
         }
+
+        if(sent && recieved) {
+            character = rps(pChoice, oChoice);
+            display_character (character);
+
+            /* Reset the game */
+            if (navswitch_push_event_p(NAVSWITCH_PUSH)) {
+                sent = 0;
+                recieved = 0;
+                ready = 0;
+                display_character('R');
+            }
+        }
+
+        tinygl_update();
     }
     return 0;
 }
