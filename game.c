@@ -132,17 +132,16 @@ int main (void)
     char recieved = 0;
     char sent = 0;
     char ready = 0;
-
     pacer_wait ();
 
-    display_character(character);
 
     while (1)
     {
 
-        navswitch_update ();
-        tinygl_update ();
+
         if(!ready) {
+            navswitch_update ();
+            tinygl_update ();
             if (navswitch_push_event_p (NAVSWITCH_NORTH) && i < 2) {
                 character = options[++i];
             }
@@ -156,7 +155,6 @@ int main (void)
             }
             display_character(character);
         }
-
         else {
             ir_uart_putc(pChoice);
             sent = 1;
@@ -177,17 +175,33 @@ int main (void)
         }
 
         if(sent && recieved) {
-
             character = rps(pChoice, oChoice);
             display_character (character);
 
-            /* Reset the game */
+            navswitch_update();
             if (navswitch_push_event_p(NAVSWITCH_PUSH)) {
                 sent = 0;
                 recieved = 0;
                 ready = 0;
-                display_character('R');
+                pChoice = '\0';
+                oChoice = '\0';
+                i = 0;
+                tinygl_clear();
+                character = options[i];
+                display_character(character);
+
+
             }
+
+                /* Reset the game */
+/*
+                if (navswitch_push_event_p(NAVSWITCH_PUSH)) {
+                    sent = 0;
+                    recieved = 0;
+                    ready = 0;
+                    tinygl_clear();
+                }
+*/
         }
 
         tinygl_update();
