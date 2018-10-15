@@ -37,44 +37,44 @@ char rps(char pChoice, char oChoice)
         {
             return draw;
             isGameOver = 1;
-        } 
-        
+        }
+
         /* If player chooses rock. */
         else if (pChoice == rock) {
-            
+
             /* Rock beats scissors. */
             if (oChoice == scissor)
             {
                 return win;
                 isGameOver = 1;
             }
-            
+
             /* Paper beats rock. */
             else if (oChoice == paper)
             {
                 return lose;
                 isGameOver = 1;
             }
-        } 
-        
+        }
+
         /* If player chooses paper. */
         else if (pChoice == paper) {
-    
+
             /* Paper beats rock. */
             if (oChoice == rock)
             {
                 return win;
                 isGameOver = 1;
-            } 
-            
+            }
+
             /* Scissors beats paper. */
             else if (oChoice == scissor)
             {
                 return lose;
                 isGameOver = 1;
             }
-        } 
-        
+        }
+
         /* If player chooses scissors. */
         else if (pChoice == scissor)
         {
@@ -83,8 +83,8 @@ char rps(char pChoice, char oChoice)
             {
                 return win;
                 isGameOver = 1;
-            } 
-            
+            }
+
             /* Rock beats scissors. */
             else if (oChoice == rock)
             {
@@ -136,6 +136,12 @@ int main (void)
 
     while (1)
     {
+        if (navswitch_push_event_p (NAVSWITCH_PUSH) && isGameOver) {
+                pChoice = '\0';
+                oChoice = '\0';
+                isGameOver = 0;
+                main();
+        }
         while (pChoice == '\0')
         {
             pacer_wait ();
@@ -160,22 +166,14 @@ int main (void)
             pacer_wait ();
             tinygl_update ();
             display_character(character);
-            if (ir_uart_read_ready_p()) {
+            if (ir_uart_read_ready_p())
                 ir_uart_putc(pChoice);
                 {
-                    
                     oChoice = ir_uart_getc();
                     character = rps(pChoice, oChoice);
                     display_character(character);
                 }
-            }
-            if (navswitch_push_event_p (NAVSWITCH_PUSH) && isGameOver) {
-                pChoice = '\0';
-                oChoice = '\0';
-                isGameOver = 0;
-                main();
 
-            }
         }
 
     }
