@@ -17,7 +17,7 @@
 
 /* Define polling rate in Hz. */
 #define LOOP_RATE 300
-#define MESSAGE_RATE 10
+#define MESSAGE_RATE 20
 
 
 /* Initialise all possible characters to be displayed on the LED matrix,
