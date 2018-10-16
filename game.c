@@ -139,6 +139,7 @@ int main (void)
     char received = 0;
     char sent = 0;
     char ready = 0;
+    char tempSym;
 
     pacer_wait ();
 
@@ -172,10 +173,11 @@ int main (void)
         /* No symbol has been recieved. */
         if (!received) {
             if (ir_uart_read_ready_p()) {
-                oChoice = ir_uart_getc();
+                tempSym = ir_uart_getc();
                 /* Check if recieved symbol is valid */
-                if(oChoice == 'R' || oChoice == 'P' || oChoice == 'S')
+                if(tempSym == 'R' || tempSym == 'P' || tempSym == 'S')
                 {
+                    oChoice = tempSym;
                     received = 1;
                 }
                 else {
@@ -198,6 +200,7 @@ int main (void)
             /* Set reduntant options, so IR doesn't continue transmitting valid text. */
             pChoice = 'X';
             oChoice = 'X';
+            //ir_uart_putc(pChoice);
 
             navswitch_update();
 
