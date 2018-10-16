@@ -110,7 +110,7 @@ void gameInit (void)
     /* Initialise tinygl module. */
     tinygl_init(LOOP_RATE);
     tinygl_font_set(&font5x7_1);
-    tinygl_text_mode_set(TINYGL_TEXT_MODE_STEP);
+    tinygl_text_mode_set(TINYGL_TEXT_MODE_SCROLL);
     tinygl_text_dir_set (TINYGL_TEXT_DIR_NORMAL);
     tinygl_text_speed_set(MESSAGE_RATE);
     tinygl_update ();
@@ -140,6 +140,8 @@ int main (void)
     char sent = 0;
     char ready = 0;
     char tempSym;
+    char result;
+    int text = 0;
 
     pacer_wait ();
 
@@ -166,7 +168,7 @@ int main (void)
 
         /* Transmit symbol if player has chosen one. */
         else {
-            ir_uart_putc_nocheck(pChoice);
+            ir_uart_putc(pChoice);
             sent = 1;
         }
 
@@ -180,9 +182,6 @@ int main (void)
                     oChoice = tempSym;
                     received = 1;
                 }
-                else {
-                    displayCharacter(wait);
-                }
             }
         }
 
@@ -194,28 +193,54 @@ int main (void)
         /* If sent symbol and recieved symbol. */
         if(sent && received) {
             /* Determine the outcome of the game. */
-            character = getResult(pChoice, oChoice);
-            displayCharacter (character);
+            result = getResult(pChoice, oChoice);
+
+            if (result == 'W')
+            {
+                if (!text)
+                {
+                    tinygl_text("WINNER");
+                    text = 1;
+                }
+            }
+            else if (result == 'L')
+            {
+                if (!text)
+                {
+                    tinygl_text("LOSER");
+                    text = 1;
+                }
+            }
+            else if (result == 'D')
+            {
+                if (!text)
+                {
+                    tinygl_text("DRAW");
+                    text = 1;
+                }
+            }
 
             /* Set reduntant options, so IR doesn't continue transmitting valid text. */
-            pChoice = 'X';
-            oChoice = 'X';
+            //pChoice = 'X';
+            //oChoice = 'X';
             //ir_uart_putc(pChoice);
 
             navswitch_update();
 
             /* Reset the game. */
-            if (navswitch_push_event_p(NAVSWITCH_PUSH)) {
-                sent = 0;
-                received = 0;
-                ready = 0;
-                i = 0;
-                tinygl_clear();
-                character = options[i];
-                displayCharacter(character);
-            }
-
+        if (navswitch_push_event_p(NAVSWITCH_PUSH)) {
+            oChoice = 'X';
+            pChoice = 'Y';
+            text = 0;
+            sent = 0;
+            received = 0;
+            ready = 0;
+            i = 0;
+            tinygl_clear();
+            character = options[i];
+            displayCharacter(character);
         }
+    }
 
         tinygl_update();
     }
