@@ -2,6 +2,7 @@
  * Group 211
  * Joshua Smith - jsm160
  * Isaac Worsley - itw21
+ * 16/10/18
  * */
 
 /* Module declarations. */
@@ -18,11 +19,10 @@
 #define LOOP_RATE 300
 #define MESSAGE_RATE 10
 
-static bool isGameOver = 0;
 
-/** Initialise all possible characters to be displayed on the LED matrix
- *  as a result of making a decision about the result of the game */
-char rps(char pChoice, char oChoice)
+/* Initialise all possible characters to be displayed on the LED matrix,
+ *  determines result of the game. */
+char getResult(char pChoice, char oChoice)
 {
     char win = 'W';
     char lose = 'L';
@@ -88,8 +88,8 @@ char rps(char pChoice, char oChoice)
         }
     }
 }
-/** Displays the text on the LED matrix. */
-void display_character (char character)
+/* Displays the given text (character) on the LED matrix. */
+void displayCharacter (char character)
 {
     char buffer[2];
     buffer[0] = character;
@@ -97,48 +97,55 @@ void display_character (char character)
     tinygl_text (buffer);
 }
 
-/** Initialise the FunKit4 hardware and the tinygl module to display text. */
-void game_init (void)
+/* Initialise the FunKit4 hardware and the tinygl module used to display text. */
+void gameInit (void)
 {
+    /* Initialise FunKit. */
     system_init();
     ledmat_init();
     navswitch_init();
-    tinygl_init(LOOP_RATE);
     pacer_init(LOOP_RATE);
     ir_uart_init();
 
+    /* Initialise tinygl module. */
+    tinygl_init(LOOP_RATE);
     tinygl_font_set(&font5x7_1);
     tinygl_text_mode_set(TINYGL_TEXT_MODE_STEP);
     tinygl_text_dir_set (TINYGL_TEXT_DIR_NORMAL);
     tinygl_text_speed_set(MESSAGE_RATE);
+    tinygl_update ();
 }
 
+/* Main function of program. */
 int main (void)
 {
-    game_init();
-    pacer_wait ();
-    tinygl_update ();
+    gameInit();
+
+    /* Initialise a list of possible game choices. */
     char options[4];
     int i = 0;
     options[0] = 'R';
     options[1] = 'P';
     options[2] = 'S';
     options[3] = '\0';
+
+    /* Displayed if waiting for character. */
     char wait = '-';
+
+    /* Initialise helper variables. */
     char character = options[i];
     char pChoice = '\0';
-    //char oChoice = '\0';
-    char oChoice;
-    char recieved = 0;
+    char oChoice = '\0';
+    char received = 0;
     char sent = 0;
     char ready = 0;
+
     pacer_wait ();
 
-
+    /* Begin infinite loop. */
     while (1)
     {
-
-
+        /* Player has not chosen a symbol to transmit yet. */
         if(!ready) {
             navswitch_update ();
             tinygl_update ();
@@ -153,55 +160,58 @@ int main (void)
                 tinygl_clear();
                 ready = 1;
             }
-            display_character(character);
+            displayCharacter(character);
         }
+
+        /* Transmit symbol if player has chosen one. */
         else {
-            ir_uart_putc(pChoice);
+            ir_uart_putc_nocheck(pChoice);
             sent = 1;
         }
 
-        if (!recieved) {
+        /* No symbol has been recieved. */
+        if (!received) {
             if (ir_uart_read_ready_p()) {
                 oChoice = ir_uart_getc();
+                /* Check if recieved symbol is valid */
                 if(oChoice == 'R' || oChoice == 'P' || oChoice == 'S')
                 {
-                    recieved = 1;
+                    received = 1;
+                }
+                else {
+                    displayCharacter(wait);
                 }
             }
         }
 
-        if (sent && !recieved) {
-            display_character(wait);
+        /* Symbol has been sent, but none recieved. Display a hyphen. */
+        if (sent && !received) {
+            displayCharacter(wait);
         }
 
-        if(sent && recieved) {
-            character = rps(pChoice, oChoice);
-            display_character (character);
+        /* If sent symbol and recieved symbol. */
+        if(sent && received) {
+            /* Determine the outcome of the game. */
+            character = getResult(pChoice, oChoice);
+            displayCharacter (character);
+
+            /* Set reduntant options, so IR doesn't continue transmitting valid text. */
+            pChoice = 'X';
+            oChoice = 'X';
 
             navswitch_update();
+
+            /* Reset the game. */
             if (navswitch_push_event_p(NAVSWITCH_PUSH)) {
                 sent = 0;
-                recieved = 0;
+                received = 0;
                 ready = 0;
-                pChoice = '\0';
-                oChoice = '\0';
                 i = 0;
                 tinygl_clear();
                 character = options[i];
-                display_character(character);
-
-
+                displayCharacter(character);
             }
 
-                /* Reset the game */
-/*
-                if (navswitch_push_event_p(NAVSWITCH_PUSH)) {
-                    sent = 0;
-                    recieved = 0;
-                    ready = 0;
-                    tinygl_clear();
-                }
-*/
         }
 
         tinygl_update();
