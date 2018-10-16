@@ -21,7 +21,7 @@
 
 
 /* Initialise all possible characters to be displayed on the LED matrix,
- *  determines result of the game. */
+ * determines result of the game. */
 char getResult(char pChoice, char oChoice)
 {
     char win = 'W';
