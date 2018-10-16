@@ -3,6 +3,7 @@
  * Joshua Smith - jsm160
  * Isaac Worsley - itw21
  * 16/10/18
+ * Paper Scissors Rock is a simple two-player game programmed using the C language on a UCFunKit4.
  * */
 
 /* Module declarations. */
