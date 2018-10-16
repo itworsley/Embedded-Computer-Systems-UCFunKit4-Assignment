@@ -31,58 +31,44 @@ char getResult(char pChoice, char oChoice)
     char paper = 'P';
     char scissor = 'S';
 
-    while (1)
-    {
+    while (1) {
         /* If a draw occurs. */
-        if (pChoice == oChoice)
-        {
+        if (pChoice == oChoice) {
             return draw;
         }
 
         /* If player chooses rock. */
         else if (pChoice == rock) {
-
             /* Rock beats scissors. */
-            if (oChoice == scissor)
-            {
+            if (oChoice == scissor) {
                 return win;
             }
-
             /* Paper beats rock. */
-            else if (oChoice == paper)
-            {
+            else if (oChoice == paper) {
                 return lose;
             }
         }
 
         /* If player chooses paper. */
         else if (pChoice == paper) {
-
             /* Paper beats rock. */
-            if (oChoice == rock)
-            {
+            if (oChoice == rock) {
                 return win;
             }
-
             /* Scissors beats paper. */
-            else if (oChoice == scissor)
-            {
+            else if (oChoice == scissor) {
                 return lose;
             }
         }
 
         /* If player chooses scissors. */
-        else if (pChoice == scissor)
-        {
+        else if (pChoice == scissor) {
             /* Scissors beats paper. */
-            if (oChoice == paper)
-            {
+            if (oChoice == paper) {
                 return win;
             }
-
             /* Rock beats scissors. */
-            else if (oChoice == rock)
-            {
+            else if (oChoice == rock) {
                 return lose;
             }
         }
@@ -154,11 +140,9 @@ int main (void)
             tinygl_update ();
             if (navswitch_push_event_p (NAVSWITCH_NORTH) && i < 2) {
                 character = options[++i];
-            }
-            if (navswitch_push_event_p (NAVSWITCH_SOUTH) && i > 0) {
+            } if (navswitch_push_event_p (NAVSWITCH_SOUTH) && i > 0) {
                 character = options[--i];
-            }
-            if (navswitch_push_event_p(NAVSWITCH_PUSH)) {
+            } if (navswitch_push_event_p(NAVSWITCH_PUSH)) {
                 pChoice = character;
                 tinygl_clear();
                 ready = 1;
@@ -177,8 +161,7 @@ int main (void)
             if (ir_uart_read_ready_p()) {
                 tempSym = ir_uart_getc();
                 /* Check if recieved symbol is valid */
-                if(tempSym == 'R' || tempSym == 'P' || tempSym == 'S')
-                {
+                if(tempSym == 'R' || tempSym == 'P' || tempSym == 'S') {
                     oChoice = tempSym;
                     received = 1;
                 }
@@ -195,52 +178,38 @@ int main (void)
             /* Determine the outcome of the game. */
             result = getResult(pChoice, oChoice);
 
-            if (result == 'W')
-            {
-                if (!text)
-                {
+            if (result == 'W') {
+                if (!text) {
                     tinygl_text("WINNER");
                     text = 1;
                 }
-            }
-            else if (result == 'L')
-            {
-                if (!text)
-                {
+            } else if (result == 'L') {
+                if (!text) {
                     tinygl_text("LOSER");
                     text = 1;
                 }
-            }
-            else if (result == 'D')
-            {
-                if (!text)
-                {
+            } else if (result == 'D') {
+                if (!text) {
                     tinygl_text("DRAW");
                     text = 1;
                 }
             }
 
-            /* Set reduntant options, so IR doesn't continue transmitting valid text. */
-            //pChoice = 'X';
-            //oChoice = 'X';
-            //ir_uart_putc(pChoice);
-
             navswitch_update();
-
             /* Reset the game. */
-        if (navswitch_push_event_p(NAVSWITCH_PUSH)) {
-            oChoice = 'X';
-            pChoice = 'Y';
-            text = 0;
-            sent = 0;
-            received = 0;
-            ready = 0;
-            i = 0;
-            tinygl_clear();
-            character = options[i];
-            displayCharacter(character);
+            if (navswitch_push_event_p(NAVSWITCH_PUSH)) {
+                oChoice = 'X';
+                pChoice = 'Y';
+                text = 0;
+                sent = 0;
+                received = 0;
+                ready = 0;
+                i = 0;
+                tinygl_clear();
+                character = options[i];
+                displayCharacter(character);
+            }
         }
-    }
 
         tinygl_update();
     }
