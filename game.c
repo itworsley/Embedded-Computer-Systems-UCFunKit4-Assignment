@@ -11,9 +11,9 @@
 #include "navswitch.h"
 #include "tinygl.h"
 #include "pacer.h"
+#include "timer.h"
 #include "../fonts/font5x7_1.h"
 #include "ir_uart.h"
-#include <stdbool.h>
 
 /* Define polling rate in Hz. */
 #define LOOP_RATE 300
@@ -92,6 +92,7 @@ void gameInit (void)
     navswitch_init();
     pacer_init(LOOP_RATE);
     ir_uart_init();
+    timer_init();
 
     /* Initialise tinygl module. */
     tinygl_init(LOOP_RATE);
@@ -156,9 +157,10 @@ int main (void)
             sent = 1;
         }
 
-        /* No symbol has been recieved. */
+        /* No symbol has been received. */
         if (!received) {
             if (ir_uart_read_ready_p()) {
+                 //timer_wait(8000);
                 tempSym = ir_uart_getc();
                 /* Check if recieved symbol is valid */
                 if(tempSym == 'R' || tempSym == 'P' || tempSym == 'S') {
@@ -168,12 +170,12 @@ int main (void)
             }
         }
 
-        /* Symbol has been sent, but none recieved. Display a hyphen. */
+        /* Symbol has been sent, but none received. Display a hyphen. */
         if (sent && !received) {
             displayCharacter(wait);
         }
 
-        /* If sent symbol and recieved symbol. */
+        /* If sent symbol and received symbol. Process result of game. */
         if(sent && received) {
             /* Determine the outcome of the game. */
             result = getResult(pChoice, oChoice);
@@ -196,6 +198,7 @@ int main (void)
             }
 
             navswitch_update();
+
             /* Reset the game. */
             if (navswitch_push_event_p(NAVSWITCH_PUSH)) {
                 oChoice = 'X';
