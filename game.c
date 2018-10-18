@@ -5,7 +5,8 @@
     @author Isaac Worsley - itw21
     @date 19 Oct 2018
     @brief Paper Scissors Rock is a simple two-player game programmed using the C language on a UCFunKit4.
-    */
+*/
+
 
 /* Module declarations. */
 #include "system.h"
@@ -21,6 +22,7 @@
 /* Define polling rate in Hz. */
 #define LOOP_RATE 300
 #define MESSAGE_RATE 20
+
 
 /* Displays the given text (character) on the LED matrix. */
 void displayCharacter (char character)

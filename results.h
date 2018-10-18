@@ -5,8 +5,9 @@
     @author Isaac Worsley - itw21
     @date 19 Oct 2018
     @brief Module for Paper Scissors rock, which caculates the result of the game.
-  */
-  
+*/
+
+
 #ifndef RESULTS_H
 #define RESULTS_H
 

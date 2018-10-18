@@ -2,7 +2,7 @@
 
 ## Authors
 
-- Josh Smith
+- Joshua Smith
 > jsm160@uclive.ac.nz
 - Isaac Worsley
 > itw21@uclive.ac.nz
